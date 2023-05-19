@@ -1,0 +1,11 @@
+---
+- name: create database
+  community.mysql.mysql_db:
+    login_password: "{{mysql_root_password}}"
+    login_user: "{{mysql_root_user}}"
+    name: "{{ item.1 }}"
+    state: present
+  with_subelements:
+    - "{{ mysql_users }}"
+    - databases 
+#  no_log: True

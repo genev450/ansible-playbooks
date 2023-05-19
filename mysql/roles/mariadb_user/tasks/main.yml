@@ -1,0 +1,24 @@
+---
+- name: mysql user create
+  community.mysql.mysql_user:
+    name: "{{ item.0.username }}"
+    password: "{{ item.0.password }}"
+    priv: "{{ item.1 }}.*:{{ item.0.grants }}"
+    host: "{{ item.0.host }}"
+    append_privs: yes
+    state: present
+    login_user: "{{ mysql_root_user }}"
+    login_password: "{{ mysql_root_password }}"
+  with_subelements:
+    - "{{ mysql_users }}"
+    - databases
+
+- name: Revoke all privileges for deleted users
+  community.mysql.mysql_user:
+    login_user: "{{ mysql_root_user }}"
+    login_password: "{{ mysql_root_password }}"    
+    name: "{{ item.key }}"
+    host: "{{ item.value}}"
+    priv: "*.*:USAGE"
+    state: present
+  with_dict: "{{ mysql_deleted_users }}"

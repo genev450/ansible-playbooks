@@ -1,0 +1,63 @@
+---
+- name: install haproxy
+  # put precompiled binary of haproxy 2.6.13v, because centos repo contain old, not supported version of haproxy
+  ansible.builtin.copy:
+    src: haproxy
+    dest: /usr/local/sbin/haproxy
+    mode: '0755' 
+  when: balancer_present
+
+- name: create haproxy group
+  ansible.builtin.group:
+    name: "{{ haproxy_user_group }}"
+    state: present
+
+- name: create haproxy user
+  ansible.builtin.user:
+    name: "{{ haproxy_user }}"
+    group: "{{ haproxy_user_group }}"
+    password: '!'
+    shell: /sbin/nologin
+    create_home: False
+
+- name: Create haproxy config and log directory
+  ansible.builtin.file:
+    path: "{{ item }}"
+    state: directory
+    owner: "{{ haproxy_user_group }}"
+    group: "{{ haproxy_user }}"
+    mode: '0755'
+  with_items:
+    - "/etc/haproxy"
+    - "/var/log/haproxy"
+    - "/var/lib/haproxy/dev"
+
+- name: create haproxy systemd .service file
+  ansible.builtin.template:
+    src: haproxy.service.j2
+    dest: /usr/lib/systemd/system/haproxy.service
+
+- name: create haproxy rsyslog config
+  ansible.builtin.template:
+    src: 99-haproxy.conf.j2
+    dest: /etc/rsyslog.d/99-haproxy.conf
+  notify: restart rsyslog
+
+#- name: reload systemd daemon and run haproxy
+#  ansible.builtin.systemd:
+#    daemon_reload: true
+#    name: haproxy
+#    state: started
+#    enabled: true
+
+- name: create haproxy config file
+  ansible.builtin.template:
+    src: haproxy.cfg.j2
+    dest: /etc/haproxy/haproxy.cfg
+    mode: '0644'
+    owner: haproxy
+    group: haproxy
+    validate: /usr/local/sbin/haproxy -f %s -c -q
+  when: balancer_present
+  notify: restart haproxy
+

@@ -1,0 +1,47 @@
+---
+# mysql_secure_installation
+- name: Update MariaDB root password
+  community.mysql.mysql_user:
+    name: root
+    host: "{{ item }}"
+    password: "{{ mysql_root_password }}"
+    login_password: root
+    login_user: root
+    login_unix_socket: /var/lib/mysql/mysql.sock
+  with_items:
+    - 127.0.0.1
+    - ::1
+    - localhost
+  ignore_errors: True
+
+# mysql_secure_installation
+- name: Delete anonymous MySQL user
+  community.mysql.mysql_user: 
+    name: "" 
+    host: "{{item}}" 
+    state: absent
+    login_password: "{{mysql_root_password}}"
+    login_user: "{{mysql_root_user}}"
+  with_items:
+    - localhost
+    - "{{ ansible_nodename }}"
+  ignore_errors: True
+
+  # mysql_secure_installation
+- name: Delete Hostname based MySQL user
+  community.mysql.mysql_user:
+    login_password: "{{mysql_root_password}}"
+    login_user: "{{mysql_root_user}}"
+    name: root
+    host: "{{ ansible_nodename }}"
+    state: absent
+  ignore_errors: True
+
+  # mysql_secure_installation
+- name: Remove MySQL test database
+  community.mysql.mysql_db:
+    login_password: "{{ mysql_root_password }}"
+    login_user: "{{ mysql_root_user }}"
+    name: test 
+    state: absent
+  ignore_errors: True

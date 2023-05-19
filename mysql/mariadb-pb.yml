@@ -1,0 +1,27 @@
+---
+- name: configure mariadb
+  hosts: mariadb
+  serial: 1
+  tags:
+    - mariadb
+  roles:
+    # install mariadb server
+    - mariadb_install
+    # provide custom config and start mariadb server
+    - mariadb_config
+    # make secure config
+    - mariadb_secure
+    # create needed databases
+    - mariadb_db
+    # create needed users
+    - mariadb_user
+    # config replication if needed
+    - mariadb_replica
+
+- name: install haproxy balancer
+  hosts: haproxy
+  serial: 1
+  tags:
+    - haproxy
+  roles:
+    - haproxy_balancer

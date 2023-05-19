@@ -1,0 +1,42 @@
+---
+mysql_root_password: test
+mysql_root_user: root
+
+mariadb_replication_enabled: True
+balancer_present: True
+
+
+mysql_users:
+  - username: testuser1
+    password: test1 #need to store in vault
+    host: "%"
+    grants: "ALL"
+    databases:
+      - test1
+      - test3
+      - test4
+  - username: testuser3
+    password: test3 #need to store in vault
+    grants: "ALL"
+    host: "%"
+    databases:
+      - make1
+
+mysql_repl_user:
+  - name: repl
+    pass: verystrong
+
+mysql_deleted_users:
+  # key = username, value = host
+  - testuser3: "%"
+
+### mariadb config
+log_basename: master1
+mysql_data_dir: /var/lib/mysql
+
+mysql_repl_master: 192.168.5.5
+
+# haproxy configs
+haproxy_user: haproxy
+haproxy_user_group: haproxy
+haproxy_log_path: /var/log/haproxy

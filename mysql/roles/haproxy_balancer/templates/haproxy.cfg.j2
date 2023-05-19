@@ -1,0 +1,37 @@
+global
+  daemon
+  log /dev/log local0
+  chroot      /var/lib/haproxy
+  maxconn 4096
+  user {{ haproxy_user }}
+  group {{ haproxy_user_group }}
+
+defaults
+  log               global
+  retries           3
+  maxconn           2000
+  timeout connect   5s
+  timeout client    50s
+  timeout server    50s
+
+frontend read
+  mode tcp
+  bind 0.0.0.0:3307
+  default_backend read
+
+frontend write
+  mode tcp
+  bind 0.0.0.0:3308
+  default_backend write
+
+
+backend read
+  balance roundrobin
+  option mysql-check
+{% for host in groups['db_slave'] %}
+  server node{{ loop.index }} {{ host }}:3306
+{% endfor %}
+
+backend write
+  option mysql-check
+  server master1 {{ mysql_repl_master }}:3306

@@ -1,0 +1,12 @@
+---
+- name: use custom config
+  ansible.builtin.template:
+    src: server.cnf.j2
+    dest: /etc/my.cnf.d/server.cnf
+    mode: 0644
+
+- name: start mariadb server
+  ansible.builtin.systemd:
+    name: mariadb.service
+    state: started
+    enabled: true

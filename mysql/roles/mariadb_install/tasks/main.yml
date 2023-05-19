@@ -1,0 +1,39 @@
+---
+- name: add yum repo
+  ansible.builtin.template:
+    src: MariaDB.repo
+    dest: /etc/yum.repos.d/
+    mode: 644
+
+- name: add epel-release
+  ansible.builtin.yum:
+    name: epel-release
+    state: present
+    update_cache: true 
+    
+- name: install mysql
+  ansible.builtin.yum:
+    name: 
+    - MariaDB-client-11.0.1-1.el7.centos.x86_64
+    - MariaDB-server-11.0.1-1.el7.centos.x86_64
+    state: present
+    update_cache: true
+
+- name: get pip installer
+  get_url:
+      url: https://bootstrap.pypa.io/pip/2.7/get-pip.py
+      dest: /tmp/get-pip.py
+
+# plays below needed for create db with mysql_db role
+- name: install pip
+  command: python /tmp/get-pip.py
+
+- name: remove trash
+  ansible.builtin.file:
+    path: /tmp/get-pip.py
+    state: absent
+
+- name: install python libs
+  ansible.builtin.pip:
+    name: PyMysql
+
