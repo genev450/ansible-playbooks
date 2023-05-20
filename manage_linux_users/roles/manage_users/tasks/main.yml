@@ -1,0 +1,43 @@
+---
+- name: create new users groups
+  ansible.builtin.group:
+    name: "{{ item.1 }}"
+    state: present
+  with_subelements:
+    - "{{ users_present }}"
+    - groups
+  no_log: true
+
+- name: create new users
+  ansible.builtin.user:
+    name: "{{ item.0.username }}"
+    groups: "{{ item.1 }}"
+    append: true
+    password: "{{ item.0.password_hash }}"
+    state: present
+  with_subelements:
+    - "{{ users_present }}"
+    - groups
+  no_log: true
+
+- name: add ssh public keys
+  ansible.posix.authorized_key:
+    user: "{{ item.0.username }}"
+    key: "{{ lookup('file', 'public_keys/{{ item.1 }}') }}"
+    state: present
+  with_subelements:
+    - "{{ users_present }}"
+    - ssh_pub_keys
+  no_log: true
+
+- name: delete old users
+  ansible.builtin.user:
+    name: "{{ item }}"
+    state: absent
+  loop: "{{ users_absent }}"
+
+- name: delete old groups
+  ansible.builtin.group:
+    name: "{{ item }}"
+    state: absent
+  loop: "{{ groups_absent }}"

@@ -1,0 +1,23 @@
+---
+users_present:
+  - username: test_user1
+    password_hash: "$6$XcSGbs6I$jtbbVDieAnZIeNOAIhMx"
+    ssh_pub_keys: 
+      - test_user1.pub
+    groups:
+      - group1
+      - group2
+
+  - username: test_user2
+    password_hash: "$6$iQ2wucKy$cUKJE9.o8ZROE7JXERgK"
+    ssh_pub_keys:
+      - test_user2.pub
+    groups:
+      - group3
+      - group4
+
+users_absent:
+  - testuser3
+
+groups_absent:
+  - test_group3

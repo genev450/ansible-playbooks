@@ -1,0 +1,8 @@
+---
+- name: manage linux users
+  hosts: all
+  gather_facts: false
+  tags:
+    - manage_users
+  roles:
+    - manage_users
