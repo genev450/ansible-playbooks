@@ -23,7 +23,7 @@
 - name: add ssh public keys
   ansible.posix.authorized_key:
     user: "{{ item.0.username }}"
-    key: "{{ lookup('file', 'public_keys/{{ item.1 }}') }}"
+    key: "{{ item.1 }}"
     state: present
   with_subelements:
     - "{{ users_present }}"
