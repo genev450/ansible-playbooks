@@ -24,4 +24,5 @@
   tags:
     - haproxy
   roles:
-    - haproxy_balancer
+    - role: haproxy_balancer
+      when: balancer_present
