@@ -1,8 +1,6 @@
 ---
 ansible_connection: ssh
-ansible_user: vagrant
-ansible_ssh_pass: vagrant
+ansible_user: "{{ lookup('hashi_vault', 'secret=ansible/data/auth:ansible_user') }}"
+ansible_ssh_pass: "{{ lookup('hashi_vault', 'secret=ansible/data/auth:ansible_ssh_pass') }}"
 ansible_become: true
-
-mysql_root_password: test
-mysql_root_user: root
+ansible_hashi_vault_auth_method: userpass

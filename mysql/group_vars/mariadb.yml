@@ -1,6 +1,6 @@
 ---
-mysql_root_password: test
-mysql_root_user: root
+mysql_root_password: "{{ lookup('hashi_vault', 'secret=ansible/data/mariadb:root_password') }}"
+mysql_root_user: "{{ lookup('hashi_vault', 'secret=ansible/data/mariadb:root_user') }}"
 
 mariadb_replication_enabled: True
 balancer_present: True
@@ -8,7 +8,7 @@ balancer_present: True
 
 mysql_users:
   - username: testuser1
-    password: test1 #need to store in vault
+    password: "{{ lookup('hashi_vault', 'secret=ansible/data/mariadb:testuser1_password') }}"
     host: "%"
     grants: "ALL"
     databases:
@@ -16,7 +16,7 @@ mysql_users:
       - test3
       - test4
   - username: testuser3
-    password: test3 #need to store in vault
+    password: "{{ lookup('hashi_vault', 'secret=ansible/data/mariadb:testuser3_password') }}"
     grants: "ALL"
     host: "%"
     databases:
@@ -24,7 +24,7 @@ mysql_users:
 
 mysql_repl_user:
   - name: repl
-    pass: verystrong
+    password: "{{ lookup('hashi_vault', 'secret=ansible/data/mariadb:replica_user_password') }}"
 
 mysql_deleted_users:
   # key = username, value = host

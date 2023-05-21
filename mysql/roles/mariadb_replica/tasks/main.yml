@@ -3,7 +3,7 @@
   community.mysql.mysql_user:
     name: "{{ item.name }}"
     host: "%"
-    password: "{{ item.pass|default('verystrong') }}"
+    password: "{{ item.password|default('verystrong') }}"
     priv: "*.*:REPLICATION SLAVE"
     state: present
     login_user: "{{ mysql_root_user }}"
@@ -26,7 +26,7 @@
     mode: getprimary
     login_user: "{{ mysql_root_user }}"
     login_password: "{{ mysql_root_password }}"
-  delegate_to: node01
+  delegate_to: "{{ groups['db_master'][0] }}"
   register: master_replica_stats
   when: mariadb_replication_enabled
 

@@ -1,11 +1,29 @@
 ---
+- name: get pip installer
+  get_url:
+      url: https://bootstrap.pypa.io/pip/2.7/get-pip.py
+      dest: /tmp/get-pip.py
+
+- name: install pip
+  ansible.builtin.command: 
+    cmd: python /tmp/get-pip.py
+
+- name: remove trash
+  ansible.builtin.file:
+    path: /tmp/get-pip.py
+    state: absent
+
+- name: install python libs
+  ansible.builtin.pip:
+    name: PyMysql
+
 - name: create database
   community.mysql.mysql_db:
-    login_password: "{{mysql_root_password}}"
-    login_user: "{{mysql_root_user}}"
+    login_password: "{{ mysql_root_password }}"
+    login_user: "{{ mysql_root_user }}"
     name: "{{ item.1 }}"
     state: present
   with_subelements:
     - "{{ mysql_users }}"
     - databases 
-#  no_log: True
+  no_log: True

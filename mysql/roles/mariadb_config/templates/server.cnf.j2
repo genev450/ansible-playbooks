@@ -37,13 +37,7 @@
 [mariadb]
 datadir={{ mysql_data_dir }}
 server_id="{{ server_id }}"
-#bind-address={{ ansible_eth1.ipv4.address }}
 bind-address=0.0.0.0
 log-bin
 log-basename={{ log_basename }}
 binlog-format=mixed
-
-# This group is only read by MariaDB-10.8 servers.
-# If you use the same .cnf file for MariaDB of different versions,
-# use this group for options that older servers don't understand
-[mariadb-10.8]

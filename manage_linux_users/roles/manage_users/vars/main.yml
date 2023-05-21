@@ -1,17 +1,17 @@
 ---
 users_present:
   - username: test_user1
-    password_hash: "$6$XcSGbs6I$jtbbVDieAnZIeNOAIhMx"
+    password_hash: "{{ lookup('hashi_vault', 'secret=ansible/data/linux_users_secrets:test_user1_pass') }}"
     ssh_pub_keys: 
-      - test_user1.pub
+      - "{{ lookup('hashi_vault', 'secret=ansible/data/linux_users_secrets:test_user1_pub_key') }}"
     groups:
       - group1
       - group2
 
   - username: test_user2
-    password_hash: "$6$iQ2wucKy$cUKJE9.o8ZROE7JXERgK"
+    password_hash: "{{ lookup('hashi_vault', 'secret=ansible/data/linux_users_secrets:test_user2_pass') }}"
     ssh_pub_keys:
-      - test_user2.pub
+      - "{{ lookup('hashi_vault', 'secret=ansible/data/linux_users_secrets:test_user2_pub_key') }}"
     groups:
       - group3
       - group4
